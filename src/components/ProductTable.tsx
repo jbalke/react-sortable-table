@@ -1,44 +1,21 @@
-import React, { useMemo, useState } from 'react';
+import React from 'react';
 import { Product } from '../data/products';
+import { useSortableData } from '../hooks/useSortableData';
 
 type SortableFields = 'name' | 'price' | 'stock';
-type SortDirections = 'asc' | 'desc';
 
 type ProductTableProps = {
   products: Product[];
 };
 
 function ProductTable({ products }: ProductTableProps) {
-  const [sortConfig, setSortConfig] =
-    useState<{ field: SortableFields; direction: SortDirections } | null>(null);
+  const {
+    sortedItems: sortedProducts,
+    requestSort,
+    sortConfig,
+  } = useSortableData(products, null);
 
-  let sortedProducts = useMemo(() => {
-    const sortedProducts = [...products];
-
-    if (sortConfig == null) return sortedProducts;
-
-    sortedProducts.sort((a, b) => {
-      if (a[sortConfig.field] > b[sortConfig.field]) {
-        return sortConfig.direction === 'asc' ? 1 : -1;
-      }
-      if (a[sortConfig.field] < b[sortConfig.field]) {
-        return sortConfig.direction === 'asc' ? -1 : 1;
-      }
-      return 0;
-    });
-
-    return sortedProducts;
-  }, [sortConfig, products]);
-
-  const requestSort = (field: SortableFields): void => {
-    let direction: SortDirections = 'asc';
-    if (sortConfig?.field === field && sortConfig.direction === 'asc')
-      direction = 'desc';
-
-    setSortConfig({ field, direction });
-  };
-
-  const sortClassName = (field: SortableFields) => {
+  const getClassNamesFor = (field: SortableFields) => {
     return sortConfig?.field === field && sortConfig?.direction === 'asc'
       ? 'descending'
       : 'ascending';
@@ -52,7 +29,7 @@ function ProductTable({ products }: ProductTableProps) {
           <th>
             <button
               onClick={() => requestSort('name')}
-              className={sortClassName('name')}
+              className={getClassNamesFor('name')}
             >
               Name
             </button>
@@ -60,7 +37,7 @@ function ProductTable({ products }: ProductTableProps) {
           <th>
             <button
               onClick={() => requestSort('price')}
-              className={sortClassName('price')}
+              className={getClassNamesFor('price')}
             >
               Price
             </button>
@@ -68,7 +45,7 @@ function ProductTable({ products }: ProductTableProps) {
           <th>
             <button
               onClick={() => requestSort('stock')}
-              className={sortClassName('stock')}
+              className={getClassNamesFor('stock')}
             >
               In Stock
             </button>
