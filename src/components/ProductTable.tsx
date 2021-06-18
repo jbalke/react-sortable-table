@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Column, useTable, usePagination } from 'react-table';
+import { Column, useTable, usePagination, useSortBy } from 'react-table';
 import { Product } from '../data/products';
 
 type ProductTableProps = {
@@ -35,6 +35,7 @@ function ProductTable({ products }: ProductTableProps) {
     state: { pageIndex, pageSize },
   } = useTable(
     { columns, data, initialState: { pageIndex: 0 } },
+    useSortBy,
     usePagination
   );
 
@@ -45,7 +46,12 @@ function ProductTable({ products }: ProductTableProps) {
           {headerGroups.map((headerGroup) => (
             <tr {...headerGroup.getHeaderGroupProps()}>
               {headerGroup.headers.map((column) => (
-                <th {...column.getHeaderProps()}>{column.render('Header')}</th>
+                <th {...column.getHeaderProps(column.getSortByToggleProps())}>
+                  {column.render('Header')}{' '}
+                  <span>
+                    {column.isSorted ? (column.isSortedDesc ? ' ↑' : ' ↓') : ''}
+                  </span>
+                </th>
               ))}
             </tr>
           ))}
