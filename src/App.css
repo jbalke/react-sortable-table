@@ -45,3 +45,11 @@ tbody td {
 tbody tr:hover {
   background-color: #eee;
 }
+
+.pagination {
+  margin: 5px 0;
+}
+
+.pagination button {
+  margin: 0 1px;
+}
